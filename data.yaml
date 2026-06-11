@@ -1,0 +1,8 @@
+path: ../datasets/roboflow
+
+train: train/images
+val: valid/images
+test: test/images
+
+nc: 7
+names: ['Coral Reef', 'Crab', 'Fish', 'Fish Group', 'Human', 'Jelly fish', 'Trash']
