@@ -67,3 +67,24 @@ def cumulative_distribution_function(normalized_histogram):
 
 def histogram_equalization(image, cdf):
     return np.interp(image, np.arange(256), cdf * 255).astype(np.uint8)
+
+#para testes sem conversão para YCbCr
+
+def bilateral_filter_rgb(image, sigma_space, sigma_intensity):
+    channels = []
+    for c in range(3):
+        channels.append(bilateral_filter(image[:, :, c], sigma_space, sigma_intensity))
+    return np.dstack(channels)
+
+def equalize_channel(channel):
+    channel_u8 = np.clip(channel, 0, 255).astype(np.uint8)
+    hist = calculate_histogram(channel_u8)
+    norm_hist = normalize_histogram(hist, channel_u8.size)
+    cdf = cumulative_distribution_function(norm_hist)
+    return histogram_equalization(channel_u8, cdf)
+
+def equalize_rgb(image):
+    equalized = np.zeros_like(image)
+    for c in range(3):
+        equalized[:, :, c] = equalize_channel(image[:, :, c])
+    return equalized

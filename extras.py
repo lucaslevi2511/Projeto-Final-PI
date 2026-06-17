@@ -95,3 +95,12 @@ if __name__ == "__main__":
         exibir_contagem(diretorio)
     else:
         print(f"Erro: '{diretorio}' não é um diretório válido.")
+
+print("\n\n======Contagem de imagens de TESTE no dataset original======:\n\n")
+exibir_contagem("test")
+print("\n\n======Contagem de imagens de TREINAMENTO no dataset original======:\n\n")
+exibir_contagem("train")
+print("\n\n======Contagem de imagens de VALIDAÇÃO no dataset original======:\n\n")
+exibir_contagem("valid")
+print("\n\n======Contagem de imagens de SAÍDA DE RECORTE após pipeline======:\n\n")
+exibir_contagem("saida_recortes")

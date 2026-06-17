@@ -2,12 +2,13 @@ import os
 import glob
 import cv2
 import numpy as np
+from logger import logger
 
 from config import TARGET_SIZE, PADDING_RATIO, MAKE_SQUARE
 from image_processing import (
     white_balance_gray_world, rgb2ycbcr, ycbcr2rgb, 
     bilateral_filter, calculate_histogram, normalize_histogram,
-    cumulative_distribution_function, histogram_equalization, normalizar
+    cumulative_distribution_function, histogram_equalization, normalizar, bilateral_filter_rgb, equalize_rgb
 )
 from compression import compress_numpy_image, decompress_to_numpy
 
@@ -36,6 +37,7 @@ def parse_label_line(line):
         return None, None, None
 
     pts = np.array(numeric, dtype=np.float32).reshape(-1, 2)
+    logger.info(f"Parsed line: {line} -> points: {pts}, class_name: {class_name}, class_id: {class_id}")
     return pts, class_name, class_id
 
 def polygon_to_bbox(points, img_w, img_h, padding_ratio=0.10):
@@ -109,6 +111,7 @@ def process_image_and_labels(image_path, label_path, output_dir):
             continue
 
         x_min, y_min, x_max, y_max = polygon_to_bbox(points, w, h, PADDING_RATIO)
+        logger.info(f"Processing image: {image_path}, label: {line}")
 
         if MAKE_SQUARE:
             x_min, y_min, x_max, y_max = make_square_crop(img, x_min, y_min, x_max, y_max)
@@ -127,11 +130,14 @@ def process_image_and_labels(image_path, label_path, output_dir):
         # Pipeline de processamento de imagem
         crop_resized = crop_resized[..., [2, 1, 0]] # BGR to RGB
         crop_resized = white_balance_gray_world(crop_resized)
+        """
         ycbcr_img = rgb2ycbcr(crop_resized)
 
         cb = ycbcr_img[:, :, 1]
         cr = ycbcr_img[:, :, 2]
         y = ycbcr_img[:, :, 0].astype(np.float32) / 255.0
+        
+        #y = (0.299 * r + 0.587 * g + 0.114 * b) / 255.0 #versão com luminância aproximada sem conversão completa para YCbCr
 
         y_filtered = bilateral_filter(y, 2, 0.1)
         y_filtered = np.clip(y_filtered * 255, 0, 255).astype(np.uint8)
@@ -143,6 +149,15 @@ def process_image_and_labels(image_path, label_path, output_dir):
         
         ycbcr_equalized = np.dstack((y_equalized, cb, cr))
         img_equalized = ycbcr2rgb(ycbcr_equalized)
+        #y_original = np.clip((0.299 * r + 0.587 * g + 0.114 * b), 1.0, 255.0) #versão com luminância aproximada sem conversão completa para YCbCr
+        #gain = (y_equalized / y_original)[:, :, None] #versão com luminância aproximada sem conversão completa para YCbCr
+        #img_equalized = np.clip(crop_resized.astype(np.float32) * gain, 0, 255).astype(np.uint8) #versão com luminância aproximada sem conversão completa para YCbCr
+        """
+
+        img_filtered = bilateral_filter_rgb(crop_resized.astype(np.float32), 2, 0.1)
+        img_equalized = equalize_rgb(img_filtered)
+
+
         cnn_img_equalized = normalizar(img_equalized)
         img_to_save = (cnn_img_equalized * 255).astype(np.uint8)
 

@@ -1,3 +1,5 @@
 venv/
 artigo.pdf
 __pycache__/
+saida_debug/
+app.log
