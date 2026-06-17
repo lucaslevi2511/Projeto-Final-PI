@@ -1,0 +1,4 @@
+epochs=100
+batch_size=32
+learning_rate=0.001
+classes=['Coral-Reef', 'Crab', 'Fish', 'Fish-Group', 'Human', 'Jelly-fish', 'Trash']
