@@ -8,7 +8,7 @@ if __name__ == "__main__":
     logger.info("Habilitando logs...")
 
     ROOT_DIR = "."  # Diretório raiz onde estão as pastas 'train', 'valid', 'test'
-    OUTPUT_DIR = "saida_sem_conversao_rgb_para_ycbcr_e_sem_luminancia"  # Diretório de saída para os recortes processados
+    OUTPUT_DIR = "saida_sem_equalização"  # Diretório de saída para os recortes processados
 
     PROCESS_ALL = True  # Se True, processa todas as imagens; se False, processa apenas MAX_IMAGES
     MAX_IMAGES = 5 # Usado apenas se PROCESS_ALL for False

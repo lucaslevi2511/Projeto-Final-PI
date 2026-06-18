@@ -106,6 +106,8 @@ def process_image_and_labels(image_path, label_path, output_dir):
     base_name = os.path.splitext(os.path.basename(image_path))[0]
 
     for idx, line in enumerate(lines):
+        if idx>0:
+            logger.info(f"{idx+1}th label of processing image: {image_path}, label: {line}")
         points, class_name, class_id = parse_label_line(line)
         if points is None:
             continue
@@ -130,7 +132,7 @@ def process_image_and_labels(image_path, label_path, output_dir):
         # Pipeline de processamento de imagem
         crop_resized = crop_resized[..., [2, 1, 0]] # BGR to RGB
         crop_resized = white_balance_gray_world(crop_resized)
-        """
+        
         ycbcr_img = rgb2ycbcr(crop_resized)
 
         cb = ycbcr_img[:, :, 1]
@@ -142,21 +144,24 @@ def process_image_and_labels(image_path, label_path, output_dir):
         y_filtered = bilateral_filter(y, 2, 0.1)
         y_filtered = np.clip(y_filtered * 255, 0, 255).astype(np.uint8)
 
-        hist = calculate_histogram(y_filtered)
-        norm_hist = normalize_histogram(hist, y_filtered.size)
-        cdf = cumulative_distribution_function(norm_hist)
-        y_equalized = histogram_equalization(y_filtered, cdf)
+        #hist = calculate_histogram(y_filtered) 
+        #norm_hist = normalize_histogram(hist, y_filtered.size) 
+        #cdf = cumulative_distribution_function(norm_hist)
+        #y_equalized = histogram_equalization(y_filtered, cdf) 
         
-        ycbcr_equalized = np.dstack((y_equalized, cb, cr))
+        y_equalized = y_filtered #versão sem equalização de histograma
+
+        ycbcr_equalized = np.dstack((y_equalized, cb, cr)) 
         img_equalized = ycbcr2rgb(ycbcr_equalized)
         #y_original = np.clip((0.299 * r + 0.587 * g + 0.114 * b), 1.0, 255.0) #versão com luminância aproximada sem conversão completa para YCbCr
         #gain = (y_equalized / y_original)[:, :, None] #versão com luminância aproximada sem conversão completa para YCbCr
         #img_equalized = np.clip(crop_resized.astype(np.float32) * gain, 0, 255).astype(np.uint8) #versão com luminância aproximada sem conversão completa para YCbCr
+        
         """
-
+        # Teste sem conversão para YCbCr e sem equalização baseada em luminância
         img_filtered = bilateral_filter_rgb(crop_resized.astype(np.float32), 2, 0.1)
         img_equalized = equalize_rgb(img_filtered)
-
+        """
 
         cnn_img_equalized = normalizar(img_equalized)
         img_to_save = (cnn_img_equalized * 255).astype(np.uint8)

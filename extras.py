@@ -20,6 +20,7 @@ def contar_imagens(diretorio):
     total_imagens = 0
     contagem_por_tipo = {}
     contagem_por_subdir = {}
+    arquivos_contados = set()
 
     # Percorrer todos os arquivos no diretório e subdiretórios
     for root, dirs, files in os.walk(diretorio):
@@ -28,11 +29,15 @@ def contar_imagens(diretorio):
         for ext in extensoes_imagem:
             # Buscar arquivos com essa extensão (case-insensitive)
             pattern = os.path.join(root, ext)
-            pattern_upper = os.path.join(root, ext.upper())
-
-            arquivos = glob.glob(pattern) + glob.glob(pattern_upper)
+            arquivos = glob.glob(pattern)
 
             for arquivo in arquivos:
+                arquivo_normalizado = os.path.normcase(
+                    os.path.abspath(arquivo))
+                if arquivo_normalizado in arquivos_contados:
+                    continue
+
+                arquivos_contados.add(arquivo_normalizado)
                 total_imagens += 1
                 imagens_nesse_dir += 1
 
@@ -104,3 +109,5 @@ print("\n\n======Contagem de imagens de VALIDAÇÃO no dataset original======:\n
 exibir_contagem("valid")
 print("\n\n======Contagem de imagens de SAÍDA DE RECORTE após pipeline======:\n\n")
 exibir_contagem("saida_recortes")
+print("\n\n======Contagem de imagens de SAÍDA SEM BALANCEAMENTO DE CORES após pipeline======:\n\n")
+exibir_contagem("saida_sem_balanceamento_de_cores")
