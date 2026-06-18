@@ -1,0 +1,13 @@
+              precision    recall  f1-score   support
+
+  Coral-Reef       0.48      0.88      0.62        17
+        Crab       0.69      0.73      0.71        30
+        Fish       0.61      0.58      0.60        77
+  Fish-Group       0.85      0.47      0.61        36
+       Human       0.54      0.69      0.61        36
+  Jelly-fish       0.86      0.60      0.71        20
+       Trash       0.71      0.67      0.69        15
+
+    accuracy                           0.63       231
+   macro avg       0.68      0.66      0.65       231
+weighted avg       0.67      0.63      0.63       231

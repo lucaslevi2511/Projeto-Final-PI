@@ -8,13 +8,13 @@ if __name__ == "__main__":
     logger.info("Habilitando logs...")
 
     ROOT_DIR = "."  # Diretório raiz onde estão as pastas 'train', 'valid', 'test'
-    OUTPUT_DIR = "saida_sem_equalização"  # Diretório de saída para os recortes processados
+    OUTPUT_DIR = "saida_equalizacao_antes_do_filtro"  # Diretório de saída para os recortes processados
 
     PROCESS_ALL = True  # Se True, processa todas as imagens; se False, processa apenas MAX_IMAGES
     MAX_IMAGES = 5 # Usado apenas se PROCESS_ALL for False
 
     print(">>> Iniciando Extração de Recortes...")
-    extrair_recortes(ROOT_DIR, OUTPUT_DIR, process_all=PROCESS_ALL, max_images=MAX_IMAGES)
+    extrair_recortes(ROOT_DIR, OUTPUT_DIR, process_all=PROCESS_ALL, max_images=MAX_IMAGES, just_compress=True)
 
     print("\n>>> Iniciando Treinamento e Avaliação...")
     treinar_e_avaliar_modelo(OUTPUT_DIR, epochs=100, batch_size=32, lr=0.001)

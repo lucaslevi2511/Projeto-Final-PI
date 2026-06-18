@@ -139,30 +139,36 @@ def process_image_and_labels(image_path, label_path, output_dir):
         cr = ycbcr_img[:, :, 2]
         y = ycbcr_img[:, :, 0].astype(np.float32) / 255.0
         
-        #y = (0.299 * r + 0.587 * g + 0.114 * b) / 255.0 #versão com luminância aproximada sem conversão completa para YCbCr
+        #versão com luminância aproximada sem conversão completa para YCbCr
+        #y = (0.299 * r + 0.587 * g + 0.114 * b) / 255.0 
 
         y_filtered = bilateral_filter(y, 2, 0.1)
         y_filtered = np.clip(y_filtered * 255, 0, 255).astype(np.uint8)
 
-        #hist = calculate_histogram(y_filtered) 
-        #norm_hist = normalize_histogram(hist, y_filtered.size) 
-        #cdf = cumulative_distribution_function(norm_hist)
-        #y_equalized = histogram_equalization(y_filtered, cdf) 
+        hist = calculate_histogram(y_filtered) 
+        norm_hist = normalize_histogram(hist, y_filtered.size) 
+        cdf = cumulative_distribution_function(norm_hist)
+        y_equalized = histogram_equalization(y_filtered, cdf) 
         
-        y_equalized = y_filtered #versão sem equalização de histograma
+        #versão sem equalização de histograma
+        #y_equalized = y_filtered 
 
         ycbcr_equalized = np.dstack((y_equalized, cb, cr)) 
         img_equalized = ycbcr2rgb(ycbcr_equalized)
-        #y_original = np.clip((0.299 * r + 0.587 * g + 0.114 * b), 1.0, 255.0) #versão com luminância aproximada sem conversão completa para YCbCr
-        #gain = (y_equalized / y_original)[:, :, None] #versão com luminância aproximada sem conversão completa para YCbCr
-        #img_equalized = np.clip(crop_resized.astype(np.float32) * gain, 0, 255).astype(np.uint8) #versão com luminância aproximada sem conversão completa para YCbCr
-        
+
         """
-        # Teste sem conversão para YCbCr e sem equalização baseada em luminância
+        #versão com luminância aproximada sem conversão completa para YCbCr
+        y_original = np.clip((0.299 * r + 0.587 * g + 0.114 * b), 1.0, 255.0) 
+        gain = (y_equalized / y_original)[:, :, None] 
+        img_equalized = np.clip(crop_resized.astype(np.float32) * gain, 0, 255).astype(np.uint8)
+        """
+
+        """
+        # Versão sem conversão para YCbCr e sem equalização baseada em luminância
         img_filtered = bilateral_filter_rgb(crop_resized.astype(np.float32), 2, 0.1)
         img_equalized = equalize_rgb(img_filtered)
         """
-
+        
         cnn_img_equalized = normalizar(img_equalized)
         img_to_save = (cnn_img_equalized * 255).astype(np.uint8)
 
@@ -174,7 +180,61 @@ def process_image_and_labels(image_path, label_path, output_dir):
         out_path = os.path.join(class_dir, out_name)
         cv2.imwrite(out_path, img_descomprimida)
 
-def extrair_recortes(root_dir, output_dir, process_all=False, max_images=50):
+def compress_image_and_labels(image_path, label_path, output_dir):
+    img = cv2.imread(image_path)
+    if img is None:
+        print(f"Falha ao abrir imagem: {image_path}")
+        return
+
+    h, w = img.shape[:2]
+
+    if not os.path.exists(label_path):
+        print(f"Label não encontrado para: {image_path}")
+        return
+
+    with open(label_path, "r", encoding="utf-8") as f:
+        lines = [line.strip() for line in f if line.strip()]
+
+    base_name = os.path.splitext(os.path.basename(image_path))[0]
+
+    for idx, line in enumerate(lines):
+        if idx>0:
+            logger.info(f"{idx+1}th label of processing image: {image_path}, label: {line}")
+        points, class_name, class_id = parse_label_line(line)
+        if points is None:
+            continue
+
+        x_min, y_min, x_max, y_max = polygon_to_bbox(points, w, h, PADDING_RATIO)
+        logger.info(f"Processing image: {image_path}, label: {line}")
+
+        if MAKE_SQUARE:
+            x_min, y_min, x_max, y_max = make_square_crop(img, x_min, y_min, x_max, y_max)
+
+        crop = img[y_min:y_max, x_min:x_max]
+        if crop.size == 0:
+            continue
+
+        crop_resized = cv2.resize(crop, TARGET_SIZE, interpolation=cv2.INTER_AREA)
+
+        class_dir = os.path.join(output_dir, class_name)
+        ensure_dir(class_dir)
+
+        out_name = f"{base_name}_{idx}.jpg"
+        
+        # Pipeline de processamento de imagem
+        crop_resized = crop_resized[..., [2, 1, 0]] # BGR to RGB
+       
+        img_to_save = crop_resized.astype(np.uint8)
+
+        # Compressão e Descompressão (Simulação/Ciclo completo)
+        shape = img_to_save.shape
+        img_comprimida = compress_numpy_image(img_to_save)
+        img_descomprimida = decompress_to_numpy(img_comprimida, shape)
+        
+        out_path = os.path.join(class_dir, out_name)
+        cv2.imwrite(out_path, img_descomprimida)
+
+def extrair_recortes(root_dir, output_dir, process_all=False, max_images=50, just_compress=False):
     ensure_dir(output_dir)
     subsets = ["train", "valid", "test"]
     dataset_files = []
@@ -205,6 +265,9 @@ def extrair_recortes(root_dir, output_dir, process_all=False, max_images=50):
         print(f"[Dataset] Processando apenas um subset de {len(dataset_files)} imagens para teste rápido.")
 
     for subset, image_path, label_path in dataset_files:
-        process_image_and_labels(image_path, label_path, os.path.join(output_dir, subset))
+        if just_compress:
+            compress_image_and_labels(image_path, label_path, os.path.join(output_dir, subset))
+        else:
+            process_image_and_labels(image_path, label_path, os.path.join(output_dir, subset))
     
     print("[Dataset] Extração de recortes concluída com sucesso!")

@@ -1,0 +1,129 @@
+1. Saida_com_pipeline_completa
+
+              precision    recall  f1-score   support
+
+  Coral-Reef       0.60      0.71      0.65        17
+        Crab       0.77      0.67      0.71        30
+        Fish       0.67      0.75      0.71        77
+  Fish-Group       0.82      0.64      0.72        36
+       Human       0.68      0.69      0.68        36
+  Jelly-fish       1.00      0.70      0.82        20
+       Trash       0.53      0.67      0.59        15
+
+    accuracy                           0.70       231
+   macro avg       0.72      0.69      0.70       231
+weighted avg       0.72      0.70      0.70       231
+
+2. Saida_sem_balanceamento_de_cores
+
+              precision    recall  f1-score   support
+
+  Coral-Reef       0.47      0.47      0.47        17
+        Crab       0.92      0.40      0.56        30
+        Fish       0.59      0.71      0.64        77
+  Fish-Group       0.82      0.75      0.78        36
+       Human       0.76      0.61      0.68        36
+  Jelly-fish       0.53      0.80      0.64        20
+       Trash       0.67      0.67      0.67        15
+
+    accuracy                           0.65       231
+   macro avg       0.68      0.63      0.63       231
+weighted avg       0.68      0.65      0.65       231
+
+3. saida_sem_conversao_rgb_para_ycbcr
+
+              precision    recall  f1-score   support
+
+  Coral-Reef       0.54      0.88      0.67        17
+        Crab       0.88      0.47      0.61        30
+        Fish       0.64      0.79      0.71        77
+  Fish-Group       0.75      0.58      0.66        36
+       Human       0.83      0.81      0.82        36
+  Jelly-fish       1.00      0.55      0.71        20
+       Trash       0.47      0.53      0.50        15
+
+    accuracy                           0.69       231
+   macro avg       0.73      0.66      0.67       231
+weighted avg       0.73      0.69      0.69       231
+
+4. saida_sem_conversao_rgb_para_ycbcr_e_sem_luminancia
+
+              precision    recall  f1-score   support
+
+  Coral-Reef       0.33      0.29      0.31        17
+        Crab       0.87      0.43      0.58        30
+        Fish       0.65      0.66      0.65        77
+  Fish-Group       0.67      0.81      0.73        36
+       Human       0.62      0.67      0.64        36
+  Jelly-fish       0.88      0.70      0.78        20
+       Trash       0.50      0.80      0.62        15
+
+    accuracy                           0.64       231
+   macro avg       0.64      0.62      0.62       231
+weighted avg       0.66      0.64      0.64       231
+
+5. saida_sem_filtro_bilateral
+
+              precision    recall  f1-score   support
+
+  Coral-Reef       0.36      0.24      0.29        17
+        Crab       0.67      0.40      0.50        30
+        Fish       0.57      0.73      0.64        77
+  Fish-Group       0.53      0.64      0.58        36
+       Human       0.63      0.67      0.65        36
+  Jelly-fish       0.58      0.35      0.44        20
+       Trash       0.45      0.33      0.38        15
+
+    accuracy                           0.57       231
+   macro avg       0.54      0.48      0.50       231
+weighted avg       0.57      0.57      0.55       231
+
+6. saida_sempipeline
+
+              precision    recall  f1-score   support
+
+  Coral-Reef       0.46      0.94      0.62        17
+        Crab       0.78      0.70      0.74        30
+        Fish       0.66      0.56      0.61        77
+  Fish-Group       0.73      0.53      0.61        36
+       Human       0.53      0.69      0.60        36
+  Jelly-fish       0.93      0.65      0.76        20
+       Trash       0.71      0.80      0.75        15
+
+    accuracy                           0.65       231
+   macro avg       0.68      0.70      0.67       231
+weighted avg       0.68      0.65      0.65       231
+
+7. saida_apenas_recorte
+
+              precision    recall  f1-score   support
+
+  Coral-Reef       0.48      0.88      0.62        17
+        Crab       0.69      0.73      0.71        30
+        Fish       0.61      0.58      0.60        77
+  Fish-Group       0.85      0.47      0.61        36
+       Human       0.54      0.69      0.61        36
+  Jelly-fish       0.86      0.60      0.71        20
+       Trash       0.71      0.67      0.69        15
+
+    accuracy                           0.63       231
+   macro avg       0.68      0.66      0.65       231
+weighted avg       0.67      0.63      0.63       231
+
+8. saida_apenas_recorte_e_compressão
+
+              precision    recall  f1-score   support
+
+  Coral-Reef       0.50      0.47      0.48        17
+        Crab       0.68      0.83      0.75        30
+        Fish       0.69      0.49      0.58        77
+  Fish-Group       0.66      0.75      0.70        36
+       Human       0.55      0.67      0.60        36
+  Jelly-fish       0.75      0.75      0.75        20
+       Trash       0.72      0.87      0.79        15
+
+    accuracy                           0.65       231
+   macro avg       0.65      0.69      0.66       231
+weighted avg       0.65      0.65      0.64       231
+
+9. saida_equaliacao_antes_do_filtro
