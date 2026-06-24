@@ -106,3 +106,5 @@ Loss e Acurácia por Época (tanto para o conjunto de Treino quanto para o de Va
 Matriz de Confusão Completa, permitindo identificar quais classes submarinas estão se confundindo (ex: se Fish Group está sendo classificado como Fish individual devido à turbidez).
 
 Relatório de Classificação contendo os valores exatos de Precision, Recall (Sensibilidade para não deixar lixos ou espécimes passarem batidos) e o F1-Score por categoria.
+
+Link para o dataset: https://www.kaggle.com/datasets/akshatsng/underwater-dataset-for-8-classes-with-label
